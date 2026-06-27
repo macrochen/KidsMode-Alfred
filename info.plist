@@ -6,11 +6,11 @@
 	<string>com.antigravity.kidsmode</string>
 	<key>connections</key>
 	<dict>
-		<key>B1D8C1EE-591E-4B07-A5FA-8AD729FF1CC9</key>
+		<key>234D3D8E-7119-45F4-A9D4-5ABF5D1BE3B3</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>234D3D8E-7119-45F4-A9D4-5ABF5D1BE3B3</string>
+				<string>018AC6A3-C403-49F1-AB38-4F1CD9BA930F</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -19,11 +19,11 @@
 				<false/>
 			</dict>
 		</array>
-		<key>234D3D8E-7119-45F4-A9D4-5ABF5D1BE3B3</key>
+		<key>B1D8C1EE-591E-4B07-A5FA-8AD729FF1CC9</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>018AC6A3-C403-49F1-AB38-4F1CD9BA930F</string>
+				<string>234D3D8E-7119-45F4-A9D4-5ABF5D1BE3B3</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -73,18 +73,29 @@
 				<integer>102</integer>
 				<key>script</key>
 				<string>set shellCmd to "
+# Clash 控制 API 端口，默认为 9090 (ClashX/ClashX Pro)。如果不同，请按需修改。
+CLASH_API='http://127.0.0.1:9090'
+GROUP_NAME='YouTubeControl'
+
 if grep -q '# KIDS_MODE_START' /etc/hosts; then
+    # 解封本地 hosts
     sed -i '' '/# KIDS_MODE_START/,/# KIDS_MODE_END/d' /etc/hosts
     dscacheutil -flushcache
     killall -HUP mDNSResponder
+    
+    # 解封 Clash YouTube
+    if [ -f /tmp/clash_yt_state ]; then
+        PREV=\$(cat /tmp/clash_yt_state)
+        curl -s -X PUT -H 'Content-Type: application/json' -d \"{\\\"name\\\":\\\"\$PREV\\\"}\" \"\$CLASH_API/proxies/\$GROUP_NAME\" &gt; /dev/null
+    fi
+    
     echo '✅ 娱乐网站已解封，可以放松一下了。'
 else
+    # 屏蔽本地 hosts (国内视频)
     echo '# KIDS_MODE_START' &gt;&gt; /etc/hosts
     echo '127.0.0.1 www.bilibili.com' &gt;&gt; /etc/hosts
     echo '127.0.0.1 bilibili.com' &gt;&gt; /etc/hosts
     echo '127.0.0.1 search.bilibili.com' &gt;&gt; /etc/hosts
-    echo '127.0.0.1 www.youtube.com' &gt;&gt; /etc/hosts
-    echo '127.0.0.1 youtube.com' &gt;&gt; /etc/hosts
     echo '127.0.0.1 www.douyin.com' &gt;&gt; /etc/hosts
     echo '127.0.0.1 douyin.com' &gt;&gt; /etc/hosts
     echo '127.0.0.1 v.qq.com' &gt;&gt; /etc/hosts
@@ -93,6 +104,14 @@ else
     echo '127.0.0.1 www.youku.com' &gt;&gt; /etc/hosts
     echo '127.0.0.1 youku.com' &gt;&gt; /etc/hosts
     echo '# KIDS_MODE_END' &gt;&gt; /etc/hosts
+    
+    # 屏蔽 Clash YouTube
+    CURRENT=\$(curl -s \"\$CLASH_API/proxies/\$GROUP_NAME\" | grep -o '"now":"[^"]*"' | cut -d'"' -f4)
+    if [ ! -z \"\$CURRENT\" ] &amp;&amp; [ \"\$CURRENT\" != \"REJECT\" ]; then
+        echo \"\$CURRENT\" &gt; /tmp/clash_yt_state
+        curl -s -X PUT -H 'Content-Type: application/json' -d '{\"name\":\"REJECT\"}' \"\$CLASH_API/proxies/\$GROUP_NAME\" &gt; /dev/null
+    fi
+    
     dscacheutil -flushcache
     killall -HUP mDNSResponder
     echo '🚫 学习模式已开启，视频网站已被屏蔽。'
@@ -138,10 +157,10 @@ return actionResult</string>
 	</array>
 	<key>uidata</key>
 	<dict>
-		<key>B1D8C1EE-591E-4B07-A5FA-8AD729FF1CC9</key>
+		<key>018AC6A3-C403-49F1-AB38-4F1CD9BA930F</key>
 		<dict>
 			<key>xpos</key>
-			<integer>100</integer>
+			<integer>500</integer>
 			<key>ypos</key>
 			<integer>100</integer>
 		</dict>
@@ -152,10 +171,10 @@ return actionResult</string>
 			<key>ypos</key>
 			<integer>100</integer>
 		</dict>
-		<key>018AC6A3-C403-49F1-AB38-4F1CD9BA930F</key>
+		<key>B1D8C1EE-591E-4B07-A5FA-8AD729FF1CC9</key>
 		<dict>
 			<key>xpos</key>
-			<integer>500</integer>
+			<integer>100</integer>
 			<key>ypos</key>
 			<integer>100</integer>
 		</dict>
