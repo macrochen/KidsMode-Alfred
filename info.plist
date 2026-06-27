@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.antigravity.kidsmode</string>
+	<key>connections</key>
+	<dict>
+		<key>B1D8C1EE-591E-4B07-A5FA-8AD729FF1CC9</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>234D3D8E-7119-45F4-A9D4-5ABF5D1BE3B3</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>234D3D8E-7119-45F4-A9D4-5ABF5D1BE3B3</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>018AC6A3-C403-49F1-AB38-4F1CD9BA930F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Antigravity</string>
+	<key>description</key>
+	<string>一键屏蔽/解封娱乐视频网站（含B站、油管、抖音、腾讯、爱奇艺、优酷等）</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Kids Mode 学习模式</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>kids</string>
+				<key>subtext</key>
+				<string>切换开启或关闭学习模式</string>
+				<key>text</key>
+				<string>切换学习模式</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>B1D8C1EE-591E-4B07-A5FA-8AD729FF1CC9</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>set shellCmd to "
+if grep -q '# KIDS_MODE_START' /etc/hosts; then
+    sed -i '' '/# KIDS_MODE_START/,/# KIDS_MODE_END/d' /etc/hosts
+    dscacheutil -flushcache
+    killall -HUP mDNSResponder
+    echo '✅ 娱乐网站已解封，可以放松一下了。'
+else
+    echo '# KIDS_MODE_START' &gt;&gt; /etc/hosts
+    echo '127.0.0.1 www.bilibili.com' &gt;&gt; /etc/hosts
+    echo '127.0.0.1 bilibili.com' &gt;&gt; /etc/hosts
+    echo '127.0.0.1 search.bilibili.com' &gt;&gt; /etc/hosts
+    echo '127.0.0.1 www.youtube.com' &gt;&gt; /etc/hosts
+    echo '127.0.0.1 youtube.com' &gt;&gt; /etc/hosts
+    echo '127.0.0.1 www.douyin.com' &gt;&gt; /etc/hosts
+    echo '127.0.0.1 douyin.com' &gt;&gt; /etc/hosts
+    echo '127.0.0.1 v.qq.com' &gt;&gt; /etc/hosts
+    echo '127.0.0.1 www.iqiyi.com' &gt;&gt; /etc/hosts
+    echo '127.0.0.1 iqiyi.com' &gt;&gt; /etc/hosts
+    echo '127.0.0.1 www.youku.com' &gt;&gt; /etc/hosts
+    echo '127.0.0.1 youku.com' &gt;&gt; /etc/hosts
+    echo '# KIDS_MODE_END' &gt;&gt; /etc/hosts
+    dscacheutil -flushcache
+    killall -HUP mDNSResponder
+    echo '🚫 学习模式已开启，视频网站已被屏蔽。'
+fi
+"
+set actionResult to do shell script shellCmd with administrator privileges
+return actionResult</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>6</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>234D3D8E-7119-45F4-A9D4-5ABF5D1BE3B3</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>{query}</string>
+				<key>title</key>
+				<string>模式切换</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>018AC6A3-C403-49F1-AB38-4F1CD9BA930F</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>uidata</key>
+	<dict>
+		<key>B1D8C1EE-591E-4B07-A5FA-8AD729FF1CC9</key>
+		<dict>
+			<key>xpos</key>
+			<integer>100</integer>
+			<key>ypos</key>
+			<integer>100</integer>
+		</dict>
+		<key>234D3D8E-7119-45F4-A9D4-5ABF5D1BE3B3</key>
+		<dict>
+			<key>xpos</key>
+			<integer>300</integer>
+			<key>ypos</key>
+			<integer>100</integer>
+		</dict>
+		<key>018AC6A3-C403-49F1-AB38-4F1CD9BA930F</key>
+		<dict>
+			<key>xpos</key>
+			<integer>500</integer>
+			<key>ypos</key>
+			<integer>100</integer>
+		</dict>
+	</dict>
+	<key>webaddress</key>
+	<string></string>
+</dict>
+</plist>
